@@ -30,6 +30,16 @@ body {
   width: 200px;
 }
 
+#login-btns {
+  float: right;
+}
+
+input[type=submit] {
+  width: 6em;
+  height: 2em;
+  border-radius: 5px;
+}
+ 
 #sign-in {
   margin: 20px 10px;
 }

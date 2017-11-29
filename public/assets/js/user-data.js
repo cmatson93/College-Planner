@@ -9,4 +9,11 @@ function populateUserData(name) {
 
 	// Populate User Data here...
 	// TODO **************
+
+	$.ajax({
+		method: "GET",
+		url: "/user"
+	}).then(function(results) {
+		console.log("Get user!");
+	});
 }
