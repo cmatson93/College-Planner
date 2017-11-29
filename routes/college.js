@@ -39,5 +39,19 @@ router.get("/testimonials", function(req, res) {
 	res.render('testimonials');
 });
 
+router.post("/login", function(req, res) {
+	console.log("Post User Data");
+	console.log(req.body);
+	if (Object.keys(req.body).length > 2) {
+		// Regular log in
+		// Add code here ...
+	} else {
+		// New User Registration
+		// Add code here ...
+	}
+	res.render('user', req.body); // If successful for now
+	// Add code here to handle auth fail ...
+});
+
 // Make the routes avaiable to external users
 module.exports = router;

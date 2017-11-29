@@ -3,7 +3,7 @@
 </div>
 <br>
 <div class="row">
-	<form>
+	<form action="/login" method="post">
 		<div class="form-group">
 			<label for="email">Email </label>
 			<input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
@@ -16,7 +16,7 @@
 		{{#if newUser}} <!-- Only for new user registration -->
 		<div class="form-group">
 			<label for="confirm">Confirm Password </label>
-			<input type="password" class="form-control" id="confirm" name="email" placeholder="retype password">
+			<input type="password" class="form-control" id="confirm" name="confirm" placeholder="retype password">
 		</div>
 		{{/if}}
 		<button type="submit" class="btn btn-primary" id="login">Submit</button> 
