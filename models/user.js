@@ -18,19 +18,19 @@ var User = sequelize.define("user", {
     type: Sequelize.STRING
   },
   score: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    allowNull: false,
   },
   gpa: {
-    type: Sequelize.FLOAT
+    type: Sequelize.FLOAT,
+    allowNull: false,
   },
   location: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull: false,
   }
-}, 
+}); 
   
-{
-  timestamps: true
-});
 
 // Syncs with DB
 User.sync();

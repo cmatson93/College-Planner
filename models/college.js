@@ -23,11 +23,16 @@ var College = sequelize.define("college", {
   application_deadline: {
     type: Sequelize.STRING
   },
-}, 
-  
-{
-  timestamps: true
 });
+  
+
+Post.associate = function(models) {
+  Post.belongsTo(models.User, {
+    foreignKey: {
+      allowNull: false
+    }
+  });
+};
 
 // Syncs with DB
 College.sync();

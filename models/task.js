@@ -8,16 +8,19 @@ var sequelize = require("../config/connection.js");
 
 // Creates a "Chirp" model that matches up with DB
 var Task = sequelize.define("task", {
-  user_id: {
-    type: Sequelize.STRING
-  },
+ 
   task: {
     type: Sequelize.STRING
   }
-},  
-{
-  timestamps: true
 });
+
+Post.associate = function(models) {
+  Post.belongsTo(models.User, {
+    foreignKey: {
+      allowNull: false
+    }
+  });
+};
 
 // Syncs with DB
 Task.sync();
