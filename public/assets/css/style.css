@@ -25,33 +25,17 @@ body {
   align-content: center;
 }
 
+/* Style for the logo int he nav bar header */
 #logo {
   height: 75px;
   width: 200px;
 }
 
+/* Style for login, register links below nav bar */
 #login-btns {
   float: right;
 }
-
-input[type=submit] {
-  width: 6em;
-  height: 2em;
-  border-radius: 5px;
-}
  
-#sign-in {
-  margin: 20px 10px;
-}
-
-#sign-out {
-  margin: 20px 10px;
-}
-
-#register {
-  margin: 20px 10px;
-}
-
 #failed {
   color: red;
 }
