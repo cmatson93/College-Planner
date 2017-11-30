@@ -42,14 +42,6 @@ body {
 
 /* Style for contact page */
 
-.row {
-  background-color: #E0D8E1;
-}
-
-
-#contact_form {
-  background-image: url("../images/contact_image.jpg") !important;
-}
 
 /*.largerWidth {
   width: 100% !important;
@@ -57,3 +49,25 @@ body {
   margin-left: 0 !important;
 }
 */
+/* Styling for User Profile page */
+
+.row {
+  background-color: #E0D8E1;
+}
+
+#contact_form {
+  background-image: url("../images/contact_image.jpg") !important;
+}
+#user, #todo {
+  border-left: 5px groove lightgray;
+  height: 800px;
+  border-radius: 15px 50px;
+  background-color: #f5f5f5;
+}
+
+#user > h4,
+#todo > h4 {
+  color: gray;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+}

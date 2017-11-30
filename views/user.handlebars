@@ -2,4 +2,44 @@
 	<a href="/">Sign Out</a> 
 </div>
 <br>
-<h1>Welcome User: {{email}}</h1>
+<hr>
+<div class="row">
+	<div class="col-md-7" id="user">
+		<h4 style="height: 2%;">Profile</h4>
+		<hr style="border-width: 2px;">
+		<div style="height: 35%; overflow: auto;">
+			<!-- User Profile goes here -->
+			<p><strong>Name: </strong> {{ name }}</p>
+			<p><strong>Email: </strong> {{ email }}</p>
+			<p><strong>GPA: </strong> {{ gpa }}</p>
+			<p><strong>Scores: </strong> {{ scores }}</p>
+			<p><strong>Location Preference(s): </strong> {{ location }}</p>
+		</div>
+		<h4 style="height: 2%;"">Colleges</h4>
+		<hr style="border-width: 2px;">
+		<div style="height: 55%; overflow: auto">
+			<!-- College Content goes here -->
+			{{#each college}}
+				<p><strong>{{ name }}</strong></p>
+				<p>{{ info }}</p>
+				<br>
+			{{/each}}
+		</div>
+	</div>
+	<div class="col-md-1">
+		<h4></h4>
+	</div>
+	<div class="col-md-4" id="todo">
+		<h4>To-do</h4>
+		<hr style="border-width: 2px;">
+		<div style="overflow: auto;">
+			<!-- ToDo list goes here-->
+			{{#each todoList}}
+				<p><strong>{{ item }}</strong></p>
+				<p>{{ details }}</p>
+				<br>
+			{{/each}}
+		</div>
+	</div>
+</div>
+<br>
