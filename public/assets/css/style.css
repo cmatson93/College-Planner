@@ -39,9 +39,11 @@ body {
 #failed {
   color: red;
 }
-
 /* Style for contact page */
 
+#contact_form {
+  background-image: url("../images/contact_image.jpg") !important;
+}
 
 /*.largerWidth {
   width: 100% !important;
@@ -50,14 +52,10 @@ body {
 }
 */
 /* Styling for User Profile page */
-
 .row {
   background-color: #E0D8E1;
 }
 
-#contact_form {
-  background-image: url("../images/contact_image.jpg") !important;
-}
 #user, #todo {
   border-left: 5px groove lightgray;
   height: 800px;

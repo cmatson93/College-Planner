@@ -26,8 +26,8 @@ var College = sequelize.define("college", {
 });
   
 
-Post.associate = function(models) {
-  Post.belongsTo(models.User, {
+College.associate = function(models) {
+  College.belongsTo(models.User, {
     foreignKey: {
       allowNull: false
     }
