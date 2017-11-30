@@ -14,8 +14,8 @@ var Task = sequelize.define("task", {
   }
 });
 
-Post.associate = function(models) {
-  Post.belongsTo(models.User, {
+Task.associate = function(models) {
+  Task.belongsTo(models.User, {
     foreignKey: {
       allowNull: false
     }
