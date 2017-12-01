@@ -29,6 +29,17 @@
 		</div>
 		<div class="col-md-1">
 			<h4></h4>
+		<h4 style="height: 2%;">
+			Colleges <span class="glyphicon glyphicon-search" style="padding: 0 10px;"></span>
+		</h4>
+		<hr style="border-width: 2px;">
+		<div style="height: 55%; overflow: auto">
+			<!-- College Content goes here -->
+			{{#each college}}
+				<p><strong>{{ name }}</strong></p>
+				<p>{{ info }}</p>
+				<br>
+			{{/each}}
 		</div>
 		<div class="col-md-4" id="todo">
 			<h4>To-do</h4>
