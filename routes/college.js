@@ -3,17 +3,16 @@
  */
 
 // Dependencies
-var express = require("express");
+module.exports = function(app){
 
-// Routes for the Burger App
-var router = express.Router();
 
-router.get("/", function(req, res) {
+
+app.get("/", function(req, res) {
 	console.log("Welcome Page!");
 	res.render('index');
 });
 
-router.get("/signin", function(req, res) {
+app.get("/signin", function(req, res) {
 	console.log("User Sign In");
 	var userTypeObj = {
 		newUser: false
@@ -21,7 +20,7 @@ router.get("/signin", function(req, res) {
 	res.render('signin', userTypeObj);	
 });
 
-router.get("/register", function(req, res) {
+app.get("/register", function(req, res) {
 	console.log("New User Registration");
 	var userTypeObj = {
 		newUser: true
@@ -29,17 +28,21 @@ router.get("/register", function(req, res) {
 	res.render('signin', userTypeObj);	
 });
 
-router.get("/contact", function(req, res) {
+app.get("/contact", function(req, res) {
 	console.log("Contact Us");
 	res.render('contact');
 });
 
-router.get("/testimonials", function(req, res) {
+app.get("/testimonials", function(req, res) {
 	console.log("Testimonials");
 	res.render('testimonials');
 });
 
-router.post("/login", function(req, res) {
+app.get("/profile", function(req, res){
+	res.render('user');
+})
+
+app.post("/profile", function(req, res) {
 	console.log("Post User Data");
 	console.log(req.body);
 	if (Object.keys(req.body).length > 2) {
@@ -53,5 +56,4 @@ router.post("/login", function(req, res) {
 	// Add code here to handle auth fail ...
 });
 
-// Make the routes avaiable to external users
-module.exports = router;
+};

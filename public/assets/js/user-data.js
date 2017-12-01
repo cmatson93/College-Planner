@@ -1,19 +1,46 @@
-// Function to display user specific data on the main page after successful login
-function populateUserData(name) {
-	//  Update the buttons to display "Sign Out" button
-	var btnDisplay = $("#button-display");
-	btnDisplay.empty();
 
-	// Add "Sign Out" button
-	btnDisplay.html('<button type="button" class="btn btn-default navbar-btn" id="sign-out">Sign Out</button>'); 
+// Make sure we wait to attach our handlers until the DOM is fully loaded.
+$(function() {
 
-	// Populate User Data here...
-	// TODO **************
 
-	$.ajax({
-		method: "GET",
-		url: "/user"
-	}).then(function(results) {
-		console.log("Get user!");
-	});
-}
+  $("#register").on("click", function(event) {
+    console.log("YAYAYAY");
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+
+    var newUser = {
+      username: $("#email").val().trim(),
+      email: $("#email").val().trim(),
+      password: $("#password").val().trim(),
+      location: $("#location").val().trim(),
+      gpa: $("#gpa").val().trim(),
+    };
+
+    console.log(newUser);
+    // Send the POST request.
+    $.ajax("/api/users", {
+      type: "POST",
+      data: newUser
+    }).then(
+      function(result) {
+        console.log("created new user");
+        // Reload the page to get the updated list
+        // location.href = '/profile';
+        console.log(result);
+        // var id = res.body.id;
+        // console.log(id);
+        location.href = 'api/users/'+ result.id;
+      }
+    );
+  });
+
+  $.ajax("api/users/:id", {
+    type: "GET"
+  }).then(function(result){
+      console.log("___get___");
+  })
+
+});
+
+
+

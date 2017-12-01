@@ -1,20 +1,22 @@
 var db = require("../models");
 
+
 module.exports = function(app) {
   //=======================User================================
   // Get One User
-  app.get("/api/users", function(req, res) {
+  app.get("/api/users/:id", function(req, res) {
     db.User.findOne({
+
         where: {
-          username: req.body.username,
-          password: req.body.password
+          id: req.params.id
         }
       })
       .then(function(result) {
-        res.json(result);
-        // return res.render('index', {
-        //   result
-        // })
+        // res.json(result);
+        var data = {users: [result.dataValues]};
+        // console.log(result);
+        console.log(result.dataValues);
+        res.render('user', data)
       }).catch(function(err) {
         res.json(err);
       });
@@ -22,13 +24,19 @@ module.exports = function(app) {
 
   // Create User
   app.post("/api/users", function(req, res) {
+    console.log("-------");
+    console.log(req.body);
     db.User.create({
         username: req.body.username,
-        password: req.body.password
+        email: req.body.email,
+        password: req.body.password,
+        location: req.body.location,
+        gpa: req.body.gpa
       }).then(function(result) {
         res.json({
           id: result.id
         });
+
       })
       .catch(function(err) {
         res.json(err);
@@ -51,11 +59,12 @@ module.exports = function(app) {
         id: req.body.id
       }
     })
-  }).then(function(result) {
+  .then(function(result) {
     res.json(result);
   }).catch(function(err) {
     res.json(err);
   });
+});
 
   // Delete User
   app.delete("/api/users/:id", function(req, res) {
@@ -64,11 +73,12 @@ module.exports = function(app) {
         id: req.body.id
       }
     })
-  }).then(function(result) {
+  .then(function(result) {
     res.json(result);
   }).catch(function(err) {
     res.json(err);
   });
+});
 
   //=======================College================================
 
@@ -123,11 +133,12 @@ module.exports = function(app) {
         id: request.body.id
       }
     })
-  }).then(function(result) {
+  .then(function(result) {
     res.json(result);
   }).catch(function(err) {
     res.json(err);
   });
+});
 
   // Delete College
   app.delete("/api/colleges/:id", function(req, res) {
@@ -136,11 +147,12 @@ module.exports = function(app) {
         id: req.body.id
       }
     })
-  }).then(function(result) {
+  .then(function(result) {
     res.json(result);
   }).catch(function(err) {
     res.json(err);
   });
+});
 
   //=======================Task================================
 
@@ -187,11 +199,13 @@ module.exports = function(app) {
         id: request.body.id
       }
     })
-  }).then(function(result) {
+  .then(function(result) {
     res.json(result);
   }).catch(function(err) {
     res.json(err);
   });
+});
+
 
   // Delete Task
   app.delete("/api/tasks/:id", function(req, res) {
@@ -200,9 +214,11 @@ module.exports = function(app) {
         id: req.body.id
       }
     })
-  }).then(function(result) {
+  .then(function(result) {
     res.json(result);
   }).catch(function(err) {
     res.json(err);
   });
+  });
+
 };

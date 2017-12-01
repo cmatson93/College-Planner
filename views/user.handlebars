@@ -9,12 +9,15 @@
 			<h4 style="height: 2%;">Profile</h4>
 			<hr style="border-width: 2px;">
 			<div style="height: 35%; overflow: auto;">
+				<button type="submit" class="btn btn-primary" id="getInfo">Submit</button>
+				{{#each users}}
 				<!-- User Profile goes here -->
-				<p><strong>Name: </strong> {{ name }}</p>
-				<p><strong>Email: </strong> {{ email }}</p>
-				<p><strong>GPA: </strong> {{ gpa }}</p>
-				<p><strong>Scores: </strong> {{ scores }}</p>
-				<p><strong>Location Preference(s): </strong> {{ location }}</p>
+				<p><strong>Name: </strong> {{ this.username }}</p>
+				<p><strong>Email: </strong> {{ this.email }}</p>
+				<p><strong>GPA: </strong> {{ this.gpa }}</p>
+				{{!-- <p><strong>Scores: </strong> {{ scores }}</p> --}}
+				<p><strong>Location Preference(s): </strong> {{ this.location }}</p>
+				{{/each}}
 			</div>
 			<h4 style="height: 2%;"">Colleges</h4>
 			<hr style="border-width: 2px;">
