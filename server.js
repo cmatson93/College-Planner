@@ -1,5 +1,5 @@
 /*
- * BURGER (VEGETARIAN) APP. SERVER ALLOWS USER TO ADD AND DEVOUR VARIOUS KINDS OF 
+ * BURGER (VEGETARIAN) APP. SERVER ALLOWS USER TO ADD AND DEVOUR VARIOUS KINDS OF
  * VEGETATRIAN BURGERS.  DATA IS PERSISTENT AND IS STORED IN MYSQL DATABASE.
 */
 
@@ -7,6 +7,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var exphbs = require("express-handlebars");
+var db = require('./models');
 
 const PORT = process.env.PORT || 3000;  // Port to listen to
 
@@ -23,8 +24,10 @@ app.set("view engine", "handlebars");
 var routes = require("./routes/college.js");
 app.use("/", routes);
 
-//Start listening
+//Start listening when connection to server is successful
+db.sequelize.sync().then(function() {
 app.listen(PORT, function(error) {
 	if (error) throw error;
 	console.log("Listening on port: " + PORT);
+});
 });
