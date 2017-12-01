@@ -1,5 +1,7 @@
 var db = require("../models");
 
+var request = require('request');
+
 
 module.exports = function(app) {
   //=======================User================================
@@ -16,7 +18,13 @@ module.exports = function(app) {
         var data = {users: [result.dataValues]};
         // console.log(result);
         console.log(result.dataValues);
-        res.render('user', data)
+        
+        var collegeBody = makeQuery(result.dataValues, req, res);
+        // var colleges = {colleges: [collegeBody.results]};
+        // console.log("+++++++++++");
+        // console.log(collegeBody);
+        // res.render('user', data);
+        // return res.redirect(data, '/profile' )
       }).catch(function(err) {
         res.json(err);
       });
@@ -222,3 +230,31 @@ module.exports = function(app) {
   });
 
 };
+
+var makeQuery = function(data,req,res){
+  var zipCode = data.location;
+  var api_key = "TVS524kLUADDEEUcZl0PFHtEbVISmZCAGeT6buGi";
+  var results = "&_fields=id,school.name";
+  var query = "https://api.data.gov/ed/collegescorecard/v1/schools.json?_zip="+zipCode+"&_distance=100mi&api_key="+ api_key + results;
+
+  request(query, function (error, response, body) {
+    console.log('error:', error); // Print the error if one occurred
+    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    console.log('body:', JSON.parse(body)); 
+
+    // JSON.parse(body);
+
+    var colleges = {colleges: [body["results"]]};
+    console.log("____COLLEGES_____");
+    console.log(colleges);
+    res.render('user', colleges);
+
+    return body;
+
+  });
+
+}
+
+
+
+

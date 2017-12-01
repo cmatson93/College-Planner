@@ -30,15 +30,18 @@ $(function() {
         // var id = res.body.id;
         // console.log(id);
         location.href = 'api/users/'+ result.id;
+
+        // $.ajax("api/users/:id", {
+        //   type: "GET"
+        // }).then(function(result){
+        //     console.log("___get___");
+        //     // location.href = '/profile';
+        // })
       }
     );
   });
 
-  $.ajax("api/users/:id", {
-    type: "GET"
-  }).then(function(result){
-      console.log("___get___");
-  })
+  
 
 });
 
