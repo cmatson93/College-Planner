@@ -3,7 +3,7 @@ var db = require("../models");
 var request = require('request');
 
 
-module.exports = function(app) {
+// module.exports = function(app) {
   //=======================User================================
   // Get One User
   app.get("/api/users/:id", function(req, res) {
@@ -229,7 +229,7 @@ module.exports = function(app) {
   });
   });
 
-};
+// };
 
 var makeQuery = function(data,req,res){
   var zipCode = data.location;
@@ -240,20 +240,31 @@ var makeQuery = function(data,req,res){
   request(query, function (error, response, body) {
     console.log('error:', error); // Print the error if one occurred
     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-    console.log('body:', JSON.parse(body)); 
+    console.log( JSON.parse(body)); 
+    var resultJson = JSON.parse(body);
+    console.log("------");
+    console.log(resultJson.results);
+    var colleges = resultJson.results;
+    console.log("============") ;
+    console.log(colleges[0]);
+    // var destringed = JSON.parse(colleges);
+    // console.log(destringed);
+    // var one = destringed[0];
+    console.log("#############");
+    // console.log(one);
+    // console.log(JSON.parse(body.results));
 
-    // JSON.parse(body);
-
-    var colleges = {colleges: [body["results"]]};
-    console.log("____COLLEGES_____");
-    console.log(colleges);
-    res.render('user', colleges);
+    // var colleges = {colleges: body.results};
+    // console.log("____COLLEGES_____");
+    // console.log(colleges);
+    // res.render('user', colleges);
 
     return body;
 
+
   });
 
-}
+// }
 
 
 

@@ -22,14 +22,14 @@ app.set("view engine", "handlebars");
 // app.use("/", routes);
 
 require("./routes/college.js")(app);
-require("./routes/crud.js")(app);
+// require("./routes/crud.js")(app);
 
 //Start listening when connection to server is successful
-db.sequelize.sync().then(function() {
-app.listen(PORT, function(error) {
-	if (error) throw error;
-	console.log("Listening on port: " + PORT);
-});
+db.sequelize.sync({force: true}).then(function() {
+	app.listen(PORT, function(error) {
+		if (error) throw error;
+		console.log("Listening on port: " + PORT);
+	});
 });
 
 var queryURL = "https://api.data.gov/ed/collegescorecard/v1/" + 
