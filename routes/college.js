@@ -53,7 +53,7 @@ app.get("/update-profile", function(req, res){
 app.post("/update-profile", function(req, res) {
 	console.log("Update Profile");
 	console.log(req.body);
-	db.User.update({
+	var check = db.User.update({
 	  score: req.body.score,
 	  gpa: req.body.gpa,
 	  location: req.body.location,
@@ -76,7 +76,7 @@ app.post("/update-profile", function(req, res) {
 	    	renderUserCollege(result, res, tasks);
 		  })
 	});
-
+	console.log(check);
 });
 
 app.post("/profile", function(req, res) {
@@ -87,24 +87,18 @@ app.post("/profile", function(req, res) {
 		// Add code here ...
 		console.log("Existing user");
 		db.User.findOne({
-
 		    where: {
 		      email: req.body.email,
 		      password: req.body.password
 		    }
 		  })
 		  .then(function(result) {
-
-		    console.log(result);
 		    if (result != null){
 		    	// Save the current user in the global variable
 		    	userId = result.id; 
 		
-		
-				// Built the college data object to pass it to user.handlebars
+				// Build the college data object to pass it to user.handlebars
 		    	renderUserCollege(result, res, tasks);
-		    	// res.render("user", result.dataValues);
-
 		    } else {
 		    	var userTypeObj = {
 		    		newUser: false,
@@ -116,30 +110,35 @@ app.post("/profile", function(req, res) {
 	} else {
 		// New User Registration
 		// Add code here ...
-		console.log("Creating user");
+		console.log("New User Registration!");
 		if (req.body.password != req.body.confirm) {
+			// Make sure passwords match if not, display an error message and take the user back to Register page
 			var userTypeObj = {
 				newUser: true,
 				error: "Passwords don't match, try again!"
 			}	
 			res.render("signin", userTypeObj);
 		} else {
-
+			// Successful Registration.  Add the user to the database
+			// Note that username is same as email for now
 			db.User.create({
 				name: req.body.name,
 			    username: req.body.email,
 			    email: req.body.email,
-			    password: req.body.password,
-			    location: req.body.location,
-			    gpa: req.body.gpa
+			    password: req.body.password
 			  }).then(function(result) {
-			    console.log(result);
-			    // Save the current user in the global variable
+
+			    // Rember the user that logged in.  Save it global variable.
 		    	userId = result.id; 
-		
-				// Built the college data object to pass it to user.handlebars
-		    	renderUserCollege(result, res, tasks);
-			    // res.render("user", result.dataValues);
+
+		    	// Render the page now
+				var userObj = {
+			  		name: result.name,
+			  		email: result.email
+			  	};
+			  	
+			  	//Note:  We don't have college or to-do list for the new uset yet.
+			  	res.render('user', userObj);
 			  })
 			  .catch(function(err) {
 			    res.json(err);
@@ -187,21 +186,23 @@ function renderUserCollege(data, res, todos){
 	  console.log('error:', error); // Print the error if one occurred
 	  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 
-	  var length = 5;
-	  if (JSON.parse(body).results.length < 5) {
-	  	length = JSON.parse(body).results.length;
-	  } 
-	  var collegeResults = JSON.parse(body).results;
-	  var collegeArr = [];
-	  for (var i=0; i < length; i++) {
-	  	var collegeObj = {
-	  		name: collegeResults[i]["school.name"],
-	  		url: collegeResults[i]["school.school_url"],
-	  		city: collegeResults[i]["school.city"],
-	  		state: collegeResults[i]["school.state"],
-	  	};
-	  	collegeArr.push(collegeObj);
-	  }
+	  console.log(JSON.parse(body));
+
+	  // var length = 5;
+	  // if (JSON.parse(body).results.length < 5) {
+	  // 	length = JSON.parse(body).results.length;
+	  // } 
+	  // var collegeResults = JSON.parse(body).results;
+	  // var collegeArr = [];
+	  // for (var i=0; i < length; i++) {
+	  // 	var collegeObj = {
+	  // 		name: collegeResults[i]["school.name"],
+	  // 		url: collegeResults[i]["school.school_url"],
+	  // 		city: collegeResults[i]["school.city"],
+	  // 		state: collegeResults[i]["school.state"],
+	  // 	};
+	  // 	collegeArr.push(collegeObj);
+	  // }
 	  var todoList = [];
 	  console.log(todos);
 	  for (var i=0; i<todos.length; i++) {
