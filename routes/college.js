@@ -5,9 +5,10 @@
 // Dependencies
 var db = require("../models");
 var request = require('request');
+const util = require('util')
 
 // Globals
-var userObj = {};
+var userObj;
 var userId = 0;
 var tasks = [];
 
@@ -62,19 +63,28 @@ module.exports = function(app) {
 		console.log("Update Profile for ID: " + userObj.id + " and " + userObj.name);
 
 		// Let us save the latest information from the form
-		userObj["location"] = req.body.location;
-		userObj["gpa"] = req.body.gpa;
-		userObj["score"] = req.body.score;
-		console.log(userObj);
+		if (req.body.location) {
+			userObj["location"] = req.body.location;
+		}
+
+		if (req.body.gpa) {
+			userObj["gpa"] = req.body.gpa;
+		}
+
+		if (req.body.score) {
+			userObj["score"] = req.body.score;
+		}
+
+		console.log("Updated User Object: " + userObj);
 
 		// Update user data: Score, GPA and Location
 		// For now we are restricting the user from updating the name, email and password once it is created
 		// Can easily be enhanced in the future
 		db.User.update(
 		{
-			score: req.body.score,
-			gpa: req.body.gpa,
-			location: req.body.location,
+			score: userObj.score,
+			gpa: userObj.gpa,
+			location: userObj.location,
 		}, 
 		{
 			where: {
@@ -82,13 +92,8 @@ module.exports = function(app) {
 		  	}
 		})
 		.then(function(result) {
-			// Location must be present to query College Data
-			if (userObj.location) {
-				// Build the college data object to pass it to user.handlebars
-		    	renderUserCollege(userObj, res, tasks);
-	    	} else {
-	    		res.render('user', userObj);
-	    	}
+			// Build the college data with updated user profileto pass it to user.handlebars
+	    	renderUserCollege(userObj, res);	
 		});
 	});
 
@@ -111,25 +116,19 @@ module.exports = function(app) {
 			    if (result != null){
 			    	// Save the current user in the global variable
 			    	userId = result.id; 
-			
 					userObj = {
-						id: result.id,
-						name: result.name,
-				  		email: result.email,
-				  		loation: result.location,
-				  		gap: result.gpa,
-				  		score: result.score,
+						id: result.dataValues.id,
+						name: result.dataValues.name,
+				  		email: result.dataValues.email,
+				  		location: result.dataValues.location,
+				  		gpa: result.dataValues.gpa,
+				  		score: result.dataValues.score,
 				  		college: [],
 				  		todoList: []
 					};
-					console.log(result.dataValues);	
-					// Location must be present to query College Data
-					if (result.location) {
-						// Build the college data object to pass it to user.handlebars
-				    	renderUserCollege(result, res, tasks);
-			    	} else {
-			    		res.render('user', userObj);
-			    	}
+					console.log("Sign In User Data: " + util.inspect(userObj, { showHidden: true, depth: null }));
+					renderUserCollege(userObj, res);
+
 			    } else {
 					// Make sure passwords match if not, display an error message and take the user back to Register page
 			    	var userTypeObj = {
@@ -155,7 +154,7 @@ module.exports = function(app) {
 				// Rember the user that logged in.  Save it global.
 				userObj = {
 					id: 0,
-					name: req.body.name,
+					name: toTitleCase(req.body.name),
 			  		email: req.body.email,
 			  		password: req.body.password,
 			  		college: [],
@@ -183,8 +182,9 @@ module.exports = function(app) {
 
 	// Todo Processing
 	app.post("/todo", function(req, res) {
+		var task = toTitleCase(req.body.task);
 		db.Task.create({
-	        task: req.body.task,
+	        task: task,
 	        UserId: userId
 	      }).then(function(result) {
 	      	db.Task.findAll({
@@ -196,65 +196,65 @@ module.exports = function(app) {
 	      	.then(function(result) {
 	      		console.log(result);
 	        	// Built the college data object to pass it to user.handlebars
-	        	tasks = [];
+	        	var tasks = [];
 	        	for (var i=0; i< result.length; i++) {
 	        		var taskObj = {task: result[i].task};
 	        		tasks.push(taskObj);
 	        	}
 	        	userObj.todoList = tasks;
 	        	console.log(tasks);
-				renderUserCollege(userObj, res, tasks);
+				renderUserCollege(userObj, res);
 	      	});
 	      });
 	});
 };
 
 // Function to render College Data for a given location
-function renderUserCollege(data, res, todos){
-	console.log("data: " + data);
-	console.log("todos: " + todos);
+function renderUserCollege(data, res){
+	
 	var location = data.location;
-	var api_key = "TVS524kLUADDEEUcZl0PFHtEbVISmZCAGeT6buGi";
-	var results = "&_fields=school.name,school.school_url,school.city,school.state";
-	var query = "https://api.data.gov/ed/collegescorecard/v1/schools.json?_zip="+location+"&_distance=100mi&api_key="+ api_key + results;
 
-	request(query, function (error, response, body) {
-	  console.log('error:', error); // Print the error if one occurred
-	  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+	if (location != null) {
+		var api_key = "TVS524kLUADDEEUcZl0PFHtEbVISmZCAGeT6buGi";
+		var results = "&_fields=school.name,school.school_url,school.city,school.state";
+		var query = "https://api.data.gov/ed/collegescorecard/v1/schools.json?_zip="+location+"&_distance=100mi&api_key="+ api_key + results;
 
-	  var length = 5;
-	  if (JSON.parse(body).results.length < 5) {
-	  	length = JSON.parse(body).results.length;
-	  } 
-	  var collegeResults = JSON.parse(body).results;
-	  var collegeArr = [];
-	  for (var i=0; i < length; i++) {
-	  	var collegeObj = {
-	  		name: collegeResults[i]["school.name"],
-	  		url: collegeResults[i]["school.school_url"],
-	  		city: collegeResults[i]["school.city"],
-	  		state: collegeResults[i]["school.state"],
-	  	};
-	  	collegeArr.push(collegeObj);
-	  }
+		// API to get College Data
+		request(query, function (error, response, body) {
 
-	  var todoList = [];
-	  console.log(todos);
+	 		console.log('College Data Error:', error); // Print the error if one occurred
+	  		console.log('College Data Status Code:', response && response.statusCode); // Print the response status code if a response was received
 
-	  for (var i=0; i<todos.length; i++) {
-	  	var taskObj = {
-	  		task: todos[i].task
-	  	};
-	  	todoList.push(taskObj);
-	  }
+		  	// Display only top 5 colleges 
+		 	var length = 5;
+			if (JSON.parse(body).results.length < 5) {
+		  		length = JSON.parse(body).results.length;
+		  	} 
+		  	var collegeResults = JSON.parse(body).results;
+		  	var collegeArr = [];
+		 	for (var i=0; i < length; i++) {
+		  		var collegeObj = {
+			  		name: collegeResults[i]["school.name"],
+			  		url: collegeResults[i]["school.school_url"],
+			  		city: collegeResults[i]["school.city"],
+			  		state: collegeResults[i]["school.state"],
+			  	};
+		  		collegeArr.push(collegeObj);
+	  		}
 
-	  userObj["college"] = collegeArr;
-	  userObj["todoList"] = todoList;
-	  res.render('user', userObj);
-	 });
+			userObj["college"] = collegeArr;
+	  		res.render('user', userObj);
+		}); // request
+	} else  {
+		res.render('user', userObj);
+	} // location
 }
 
-
+// Utility function to convert to title case
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 
 
 
