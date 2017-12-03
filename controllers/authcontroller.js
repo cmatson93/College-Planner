@@ -13,14 +13,6 @@ exports.signin = function(req,res){
 
 }
 
-// exports.dashboard = function(req,res){
-// 	console.log("+++++++++++++++++++++++++++++++++++++++++++++++");
-// 	console.log(req.user.id);
-// 	console.log("+++++++++++++++++++++++++++++++++++++++++++++++");
-// 	var userId = {id: req.user.id};
-// 	res.render('dashboard',userId);
-//
-// }
 
 exports.logout = function(req,res){
 
