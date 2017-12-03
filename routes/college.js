@@ -100,6 +100,17 @@ module.exports =  function(app, passport){
 	// Post from the Sign In or Registrtion Form
 	app.get("/profile",isLoggedIn, function(req, res) {
 		console.log("Post User Sig In Data");
+		// console.log(req.user.id);
+			db.User.findOne(
+			{
+			    where: {
+			      id: req.user.id
+			    }
+			})
+			.then(function(result) {
+				console.log(result.dataValues);
+			    if (result != null){
+			    	// Save the current user in the global variable
 			    	userId = req.user.id;
 						userObj = {
 						id: req.user.id,
@@ -109,8 +120,12 @@ module.exports =  function(app, passport){
 				  		gpa: req.user.gpa,
 				  		score: req.user.score,
 				  		college: [],
-				  		todoList: []}
+				  		todoList: []
+					};
 						renderUserCollege(userObj, res);
+				}
+					});
+
 	});
 
 	// Todo Processing
