@@ -1,0 +1,33 @@
+<div class="container">
+	<div class="row" id="login-btns">
+		<a href="/">Back</a>
+	</div>
+	<br>
+	<div class="row">
+		<h5 style="color:red">{{error}}</h5>
+		<form action="/signup" method="post">
+			<div class="form-group">
+				<label for="name">Name </label>
+				<input type="text" class="form-control" id="name" name="name" placeholder="enter name here">
+			</div>
+			
+			<div class="form-group">
+				<label for="email">Email </label>
+				<input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+				<small class="form-text text-muted" id="email">We will never share your email with anyone else.</small>
+			</div>
+			<div class="form-group">
+				<label for="password">Password </label>
+				<input type="password" class="form-control" id="password" name="password" placeholder="type password">
+			</div>
+
+			<div class="form-group">
+				<label for="confirm">Confirm Password </label>
+				<input type="password" class="form-control" id="confirm" name="confirm" placeholder="retype password">
+			</div>
+
+			<button type="submit" class="btn btn-primary" id="login">Submit</button>
+
+		</form>
+	</div>
+</div>
