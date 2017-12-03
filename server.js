@@ -25,21 +25,11 @@ require("./routes/college.js")(app);
 // require("./routes/crud.js")(app);
 
 //Start listening when connection to server is successful
-db.sequelize.sync({force: true}).then(function() {
+db.sequelize.sync().then(function() {
 	app.listen(PORT, function(error) {
 		if (error) throw error;
 		console.log("Listening on port: " + PORT);
 	});
-});
-
-var queryURL = "https://api.data.gov/ed/collegescorecard/v1/" + 
-"schools.json?_zip=64075&_distance=100mi&api_key=TVS524kLUADDEEUcZl0PFHtEbVISmZCAGeT6buGi&_fields=school.name"; 
-
-
-request(queryURL, function (error, response, body) {
-  console.log('error:', error); // Print the error if one occurred
-  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-  console.log('body:', body); 
 });
 
 
