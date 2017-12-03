@@ -216,7 +216,7 @@ function renderUserCollege(data, res, todos){
 	var location = data.location;
 	var api_key = "TVS524kLUADDEEUcZl0PFHtEbVISmZCAGeT6buGi";
 	var results = "&_fields=school.name,school.school_url,school.city,school.state";
-	var query = "https://api.data.gov/ed/collegescorecard/v1/schools.json?_zip="+location+"&_distance=100mi&api_key="+ api_key + results;
+	var query = "https://api.data.gov/ed/collegescorecard/v1/schools.json?2015.academics.program.degree.biological=1&_zip="+location+"&_distance=100mi&api_key="+ api_key + results;
 
 	request(query, function (error, response, body) {
 	  console.log('error:', error); // Print the error if one occurred

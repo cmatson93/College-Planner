@@ -6,6 +6,7 @@ html {
 
 body {
   margin-bottom: 40px;
+  background-color: #040406;
 }
 
 .footer {
@@ -16,13 +17,68 @@ body {
   bottom: 0;
   text-align: center;
   font-size: small;
-  background-color: #f5f5f5;
+  background-color: #040406;
 }
 
 /* Nav Bar Formatting */
 .navbar {
-  background-color: #f5f5f5;
-  align-content: center;
+  /*background-color: #f5f5f5;*/
+  /*christinas color chages*/
+  margin-bottom: 0;
+  background-color: #777777;
+  opacity: 0.5;
+}
+
+a {
+  color: black;
+}
+
+.signIn {
+  /*background-image: url();*/
+  display: block;
+  position: relative;
+}
+
+.signIn::after {
+  content: "";
+  background-color: #777777;
+  opacity: 0.5;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;  
+  border-radius: 20px; 
+}
+
+
+/*styling for buttons*/
+.btn {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  background: #a57dab;
+  font-size: 15px;
+  font-weight: 300;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 7px 30px;
+  margin: 0 auto;
+  box-shadow: 0 4px #947099;
+  border-radius: 10px;
+}
+
+.btn:hover {
+  box-shadow: 0 2px #947099;
+  top: 2px;
+}
+
+.btn:active {
+  box-shadow: 0 0 #947099;
+  top: 6px;
 }
 
 /* Style for the logo int he nav bar header */
@@ -38,6 +94,15 @@ body {
  
 #failed {
   color: red;
+}
+
+.carousel,
+.img-responsive {
+  width:100%;
+}
+
+.nav-link:hoover {
+  color: white;
 }
 
 /* Style for carousel on homepage*/
