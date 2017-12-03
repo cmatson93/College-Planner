@@ -1,8 +1,9 @@
 /*
- * Contains all routes on the Server side. 
+ * Contains all routes on the Server side.
  */
 
 // Dependencies
+var authController = require('../controllers/authcontroller.js');
 var db = require("../models");
 var request = require('request');
 const util = require('util')
@@ -13,7 +14,7 @@ var userId = 0;
 var tasks = [];
 
 // Define and export all routes to server.js
-module.exports = function(app) {
+module.exports =  function(app, passport){
 
 	// Home page
 	app.get("/", function(req, res) {
@@ -21,25 +22,24 @@ module.exports = function(app) {
 		res.render('index');
 	});
 
-	// Sign in Page for existing users
-	app.get("/signin", function(req, res) {
-		console.log("User Sign In");
-		var userTypeObj = {
-			newUser: false,
-			error: ""
-		}
-		res.render('signin', userTypeObj);	
-	});
+	app.get('/signup', authController.signup);
 
-	// Register new user page
-	app.get("/register", function(req, res) {
-		console.log("New User Registration");
-		var userTypeObj = {
-			newUser: true,
-			error: ""
-		}
-		res.render('signin', userTypeObj);	
-	});
+
+	app.get('/signin', authController.signin);
+
+
+	app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect: '/profile',
+		failureRedirect: '/signup'
+	}));
+
+	app.get('/logout', authController.logout);
+
+
+	app.post('/signin', passport.authenticate('local-signin', {
+		successRedirect: '/profile',
+		failureRedirect: '/signin'
+}));
 
 	// Get Contact page
 	app.get("/contact", function(req, res) {
@@ -85,7 +85,7 @@ module.exports = function(app) {
 			score: userObj.score,
 			gpa: userObj.gpa,
 			location: userObj.location,
-		}, 
+		},
 		{
 			where: {
 		    	id: userObj.id
@@ -93,30 +93,26 @@ module.exports = function(app) {
 		})
 		.then(function(result) {
 			// Build the college data with updated user profileto pass it to user.handlebars
-	    	renderUserCollege(userObj, res);	
+	    	renderUserCollege(userObj, res);
 		});
 	});
 
 	// Post from the Sign In or Registrtion Form
-	app.post("/profile", function(req, res) {
+	app.get("/profile",isLoggedIn, function(req, res) {
 		console.log("Post User Sig In Data");
-		if (Object.keys(req.body).length == 2) {
-			// Existing User Sign In
-			console.log("Existing User Sign In!");
-
-			// Find the user in the database first
+		// console.log(req.user.id);
 			db.User.findOne(
 			{
 			    where: {
-			      email: req.body.email,
-			      password: req.body.password
+			      id: req.user.id
 			    }
 			})
 			.then(function(result) {
+				console.log(result.dataValues);
 			    if (result != null){
 			    	// Save the current user in the global variable
-			    	userId = result.id; 
-					userObj = {
+			    	userId = result.dataValues.id;
+						userObj = {
 						id: result.dataValues.id,
 						name: result.dataValues.name,
 				  		email: result.dataValues.email,
@@ -126,58 +122,10 @@ module.exports = function(app) {
 				  		college: [],
 				  		todoList: []
 					};
-					console.log("Sign In User Data: " + util.inspect(userObj, { showHidden: true, depth: null }));
-					renderUserCollege(userObj, res);
-
-			    } else {
-					// Make sure passwords match if not, display an error message and take the user back to Register page
-			    	var userTypeObj = {
-			    		newUser: false,
-			    		error: "Email or password don't match, try again!"
-			    	}	
-			    	res.render("signin", userTypeObj);
-			    }		  
-			  });
-		} else {
-			// New User Registration
-			console.log("New User Registration!");
-			if (req.body.password != req.body.confirm) {
-				// Make sure passwords match if not, display an error message and take the user back to Register page
-				var userTypeObj = {
-					newUser: true,
-					error: "Passwords don't match, try again!"
-				}	
-				res.render("signin", userTypeObj);
-			} else {
-				// Successful Registration.  Add the user to the database
-				// Note that username is same as email for now
-				// Rember the user that logged in.  Save it global.
-				userObj = {
-					id: 0,
-					name: toTitleCase(req.body.name),
-			  		email: req.body.email,
-			  		password: req.body.password,
-			  		college: [],
-			  		todoList: []
+						renderUserCollege(userObj, res);
 				}
+					});
 
-				db.User.create(
-				{
-					name: req.body.name,
-				    username: req.body.email,
-				    email: req.body.email,
-				    password: req.body.password
-				})
-				.then(function(result) {
-				    console.log("User Added to Database!")
-    		    	userId = result.id; 
-    		    	userObj["id"] = result.id;
-
-    		    	//Note:  We don't have college or to-do list for the new user yet.
-				  	res.render('user', userObj);
-				});
-			}
-		}
 	});
 
 	// Todo Processing
@@ -207,11 +155,21 @@ module.exports = function(app) {
 	      	});
 	      });
 	});
+
+	function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+      return next();
+
+    res.redirect('/signin');
+  }
+
 };
 
 // Function to render College Data for a given location
 function renderUserCollege(data, res){
-	
+console.log("#####################data############################")
+	console.log(data);
+
 	var location = data.location;
 
 	if (location != null) {
@@ -225,11 +183,11 @@ function renderUserCollege(data, res){
 	 		console.log('College Data Error:', error); // Print the error if one occurred
 	  		console.log('College Data Status Code:', response && response.statusCode); // Print the response status code if a response was received
 
-		  	// Display only top 5 colleges 
+		  	// Display only top 5 colleges
 		 	var length = 5;
 			if (JSON.parse(body).results.length < 5) {
 		  		length = JSON.parse(body).results.length;
-		  	} 
+		  	}
 		  	var collegeResults = JSON.parse(body).results;
 		  	var collegeArr = [];
 		 	for (var i=0; i < length; i++) {
@@ -255,16 +213,3 @@ function toTitleCase(str)
 {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
