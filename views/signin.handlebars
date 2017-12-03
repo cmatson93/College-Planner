@@ -3,7 +3,10 @@
 		<a href="/">Back</a>
 	</div>
 	<br>
-	<div class="row">
+	<div class="row pt-5">
+		<h2 class="pt-5">Please Input User Information</h2>
+	</div>
+	<div class="row signIn p-5 rounded">
 		<h5 style="color:red">{{error}}</h5>
 		<form action="/profile" method="post">
 			{{#if newUser}} <!-- Only for new user registration -->
@@ -29,7 +32,7 @@
 			</div>
 
 			{{/if}}
-			<button type="submit" class="btn btn-primary" id="login">Submit</button>
+			<button type="submit" class="btn" id="login">Submit</button>
 			
 		</form>
 	</div>
