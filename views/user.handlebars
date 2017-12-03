@@ -1,5 +1,6 @@
 <div class="container">
 	<div class="row" id="login-btns">
+		<a href="/update-profile">Update Profile</a> | 
 		<a href="/">Sign Out</a> 
 	</div>
 	<br>
@@ -13,33 +14,21 @@
 				<p><strong>Name: </strong> {{ name }}</p>
 				<p><strong>Email: </strong> {{ email }}</p>
 				<p><strong>GPA: </strong> {{ gpa }}</p>
-				<p><strong>Scores: </strong> {{ scores }}</p>
+				<p><strong>Scores: </strong> {{ score }}</p>
 				<p><strong>Location Preference(s): </strong> {{ location }}</p>
 			</div>
-			<h4 style="height: 2%;"">Colleges</h4>
+			<h4 style="height: 2%;">Colleges</h4>
 			<hr style="border-width: 2px;">
 			<div style="height: 55%; overflow: auto">
 				<!-- College Content goes here -->
 				{{#each college}}
-					<p><strong>{{ name }}</strong></p>
-					<p>{{ info }}</p>
+					<p><strong><a href="http://{{url}}" target="_blank">{{ name }}</a></strong></p>
+					<p>{{ city }}, {{state}}</p>
 					<br>
 				{{/each}}
 			</div>
 		</div>
 		<div class="col-md-1">
-			<h4></h4>
-		<h4 style="height: 2%;">
-			Colleges <span class="glyphicon glyphicon-search" style="padding: 0 10px;"></span>
-		</h4>
-		<hr style="border-width: 2px;">
-		<div style="height: 55%; overflow: auto">
-			<!-- College Content goes here -->
-			{{#each college}}
-				<p><strong>{{ name }}</strong></p>
-				<p>{{ info }}</p>
-				<br>
-			{{/each}}
 		</div>
 		<div class="col-md-4" id="todo">
 			<h4>To-do</h4>
@@ -47,11 +36,17 @@
 			<div style="overflow: auto;">
 				<!-- ToDo list goes here-->
 				{{#each todoList}}
-					<p><strong>{{ item }}</strong></p>
-					<p>{{ details }}</p>
+					<p><strong>{{ task }}</strong></p>
 					<br>
 				{{/each}}
 			</div>
+			<form method="post" action="/todo">
+				<div class="form-group">
+					<label for="task">Enter Todo </label>
+					<input type="text" class="form-control" id="task" name="task" placeholder="type todo item here">
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
 		</div>
 	</div>
 	<br>
