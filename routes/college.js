@@ -4,181 +4,216 @@
 
 // Dependencies
 var db = require("../models");
-
 var request = require('request');
+
+// Globals
 var userObj = {};
 var userId = 0;
 var tasks = [];
 
-module.exports = function(app){
+// Define and export all routes to server.js
+module.exports = function(app) {
 
-
-
-app.get("/", function(req, res) {
-	console.log("Welcome Page!");
-	res.render('index');
-});
-
-app.get("/signin", function(req, res) {
-	console.log("User Sign In");
-	var userTypeObj = {
-		newUser: false,
-		error: ""
-	}
-	res.render('signin', userTypeObj);	
-});
-
-app.get("/register", function(req, res) {
-	console.log("New User Registration");
-	var userTypeObj = {
-		newUser: true,
-		error: ""
-	}
-	res.render('signin', userTypeObj);	
-});
-
-app.get("/contact", function(req, res) {
-	console.log("Contact Us");
-	res.render('contact');
-});
-
-app.get("/testimonials", function(req, res) {
-	console.log("Testimonials");
-	res.render('testimonials');
-});
-
-app.get("/update-profile", function(req, res){
-	res.render('update');
-});
-app.post("/update-profile", function(req, res) {
-	console.log("Update Profile");
-	console.log(req.body);
-	db.User.update({
-	  score: req.body.score,
-	  gpa: req.body.gpa,
-	  location: req.body.location,
-
-	}, {
-	  where: {
-	    id: userId
-	  }
-	}).then(function(result){
-		console.log("----");
-		console.log(result);
-		db.User.findOne({
-
-		    where: {
-		      id: userId
-		    }
-		  }).then(function(result){
-		  	console.log(result);
-		  	// Built the college data object to pass it to user.handlebars
-	    	renderUserCollege(result, res, tasks);
-		  })
+	// Home page
+	app.get("/", function(req, res) {
+		console.log("Welcome Page!");
+		res.render('index');
 	});
 
-});
-
-app.post("/profile", function(req, res) {
-	console.log("Post User Data");
-	console.log(req.body);
-	if (Object.keys(req.body).length == 2) {
-		// Regular log in
-		// Add code here ...
-		console.log("Existing user");
-		db.User.findOne({
-
-		    where: {
-		      email: req.body.email,
-		      password: req.body.password
-		    }
-		  })
-		  .then(function(result) {
-
-		    console.log(result);
-		    if (result != null){
-		    	// Save the current user in the global variable
-		    	userId = result.id; 
-		
-		
-				// Built the college data object to pass it to user.handlebars
-		    	renderUserCollege(result, res, tasks);
-		    	// res.render("user", result.dataValues);
-
-		    } else {
-		    	var userTypeObj = {
-		    		newUser: false,
-		    		error: "Email or password don't match, try again!"
-		    	}	
-		    	res.render("signin", userTypeObj);
-		    }		  
-		  });
-	} else {
-		// New User Registration
-		// Add code here ...
-		console.log("Creating user");
-		if (req.body.password != req.body.confirm) {
-			var userTypeObj = {
-				newUser: true,
-				error: "Passwords don't match, try again!"
-			}	
-			res.render("signin", userTypeObj);
-		} else {
-
-			db.User.create({
-				name: req.body.name,
-			    username: req.body.email,
-			    email: req.body.email,
-			    password: req.body.password,
-			    location: req.body.location,
-			    gpa: req.body.gpa
-			  }).then(function(result) {
-			    console.log(result);
-			    // Save the current user in the global variable
-		    	userId = result.id; 
-		
-				// Built the college data object to pass it to user.handlebars
-		    	renderUserCollege(result, res, tasks);
-			    // res.render("user", result.dataValues);
-			  })
-			  .catch(function(err) {
-			    res.json(err);
-			  });
+	// Sign in Page for existing users
+	app.get("/signin", function(req, res) {
+		console.log("User Sign In");
+		var userTypeObj = {
+			newUser: false,
+			error: ""
 		}
-	}
-});
+		res.render('signin', userTypeObj);	
+	});
 
-app.post("/todo", function(req, res) {
-	db.Task.create({
-        task: req.body.task,
-        UserId: userId
-      }).then(function(result) {
-      	db.Task.findAll({
-        	// include: [db.User],
-        	where: {
-          		UserId: userId
-        	}
-      	})
-      	.then(function(result) {
-      		console.log(result);
-        	// Built the college data object to pass it to user.handlebars
-        	tasks = [];
-        	for (var i=0; i< result.length; i++) {
-        		var taskObj = {task: result[i].task};
-        		tasks.push(taskObj);
-        	}
-        	
-        	console.log(tasks);
-			renderUserCollege(userObj, res, tasks);
-      	});
-      });
-});
+	// Register new user page
+	app.get("/register", function(req, res) {
+		console.log("New User Registration");
+		var userTypeObj = {
+			newUser: true,
+			error: ""
+		}
+		res.render('signin', userTypeObj);	
+	});
 
+	// Get Contact page
+	app.get("/contact", function(req, res) {
+		console.log("Contact Us");
+		res.render('contact');
+	});
+
+	// Get Testimonials page
+	app.get("/testimonials", function(req, res) {
+		console.log("Testimonials");
+		res.render('testimonials');
+	});
+
+	//  Get Update profile page
+	app.get("/update-profile", function(req, res){
+		res.render('update', userObj);
+	});
+
+	// Post from the Profile Update form
+	app.post("/update-profile", function(req, res) {
+		console.log("Update Profile for ID: " + userObj.id + " and " + userObj.name);
+
+		// Let us save the latest information from the form
+		userObj["location"] = req.body.location;
+		userObj["gpa"] = req.body.gpa;
+		userObj["score"] = req.body.score;
+		console.log(userObj);
+
+		// Update user data: Score, GPA and Location
+		// For now we are restricting the user from updating the name, email and password once it is created
+		// Can easily be enhanced in the future
+		db.User.update(
+		{
+			score: req.body.score,
+			gpa: req.body.gpa,
+			location: req.body.location,
+		}, 
+		{
+			where: {
+		    	id: userObj.id
+		  	}
+		})
+		.then(function(result) {
+			// Location must be present to query College Data
+			if (userObj.location) {
+				// Build the college data object to pass it to user.handlebars
+		    	renderUserCollege(userObj, res, tasks);
+	    	} else {
+	    		res.render('user', userObj);
+	    	}
+		});
+	});
+
+	// Post from the Sign In or Registrtion Form
+	app.post("/profile", function(req, res) {
+		console.log("Post User Sig In Data");
+		if (Object.keys(req.body).length == 2) {
+			// Existing User Sign In
+			console.log("Existing User Sign In!");
+
+			// Find the user in the database first
+			db.User.findOne(
+			{
+			    where: {
+			      email: req.body.email,
+			      password: req.body.password
+			    }
+			})
+			.then(function(result) {
+			    if (result != null){
+			    	// Save the current user in the global variable
+			    	userId = result.id; 
+			
+					userObj = {
+						id: result.id,
+						name: result.name,
+				  		email: result.email,
+				  		loation: result.location,
+				  		gap: result.gpa,
+				  		score: result.score,
+				  		college: [],
+				  		todoList: []
+					};
+					console.log(result.dataValues);	
+					// Location must be present to query College Data
+					if (result.location) {
+						// Build the college data object to pass it to user.handlebars
+				    	renderUserCollege(result, res, tasks);
+			    	} else {
+			    		res.render('user', userObj);
+			    	}
+			    } else {
+					// Make sure passwords match if not, display an error message and take the user back to Register page
+			    	var userTypeObj = {
+			    		newUser: false,
+			    		error: "Email or password don't match, try again!"
+			    	}	
+			    	res.render("signin", userTypeObj);
+			    }		  
+			  });
+		} else {
+			// New User Registration
+			console.log("New User Registration!");
+			if (req.body.password != req.body.confirm) {
+				// Make sure passwords match if not, display an error message and take the user back to Register page
+				var userTypeObj = {
+					newUser: true,
+					error: "Passwords don't match, try again!"
+				}	
+				res.render("signin", userTypeObj);
+			} else {
+				// Successful Registration.  Add the user to the database
+				// Note that username is same as email for now
+				// Rember the user that logged in.  Save it global.
+				userObj = {
+					id: 0,
+					name: req.body.name,
+			  		email: req.body.email,
+			  		password: req.body.password,
+			  		college: [],
+			  		todoList: []
+				}
+
+				db.User.create(
+				{
+					name: req.body.name,
+				    username: req.body.email,
+				    email: req.body.email,
+				    password: req.body.password
+				})
+				.then(function(result) {
+				    console.log("User Added to Database!")
+    		    	userId = result.id; 
+    		    	userObj["id"] = result.id;
+
+    		    	//Note:  We don't have college or to-do list for the new user yet.
+				  	res.render('user', userObj);
+				});
+			}
+		}
+	});
+
+	// Todo Processing
+	app.post("/todo", function(req, res) {
+		db.Task.create({
+	        task: req.body.task,
+	        UserId: userId
+	      }).then(function(result) {
+	      	db.Task.findAll({
+	        	// include: [db.User],
+	        	where: {
+	          		UserId: userId
+	        	}
+	      	})
+	      	.then(function(result) {
+	      		console.log(result);
+	        	// Built the college data object to pass it to user.handlebars
+	        	tasks = [];
+	        	for (var i=0; i< result.length; i++) {
+	        		var taskObj = {task: result[i].task};
+	        		tasks.push(taskObj);
+	        	}
+	        	userObj.todoList = tasks;
+	        	console.log(tasks);
+				renderUserCollege(userObj, res, tasks);
+	      	});
+	      });
+	});
 };
 
+// Function to render College Data for a given location
 function renderUserCollege(data, res, todos){
+	console.log("data: " + data);
+	console.log("todos: " + todos);
 	var location = data.location;
-
 	var api_key = "TVS524kLUADDEEUcZl0PFHtEbVISmZCAGeT6buGi";
 	var results = "&_fields=school.name,school.school_url,school.city,school.state";
 	var query = "https://api.data.gov/ed/collegescorecard/v1/schools.json?_zip="+location+"&_distance=100mi&api_key="+ api_key + results;
@@ -202,32 +237,23 @@ function renderUserCollege(data, res, todos){
 	  	};
 	  	collegeArr.push(collegeObj);
 	  }
+
 	  var todoList = [];
 	  console.log(todos);
+
 	  for (var i=0; i<todos.length; i++) {
 	  	var taskObj = {
 	  		task: todos[i].task
 	  	};
 	  	todoList.push(taskObj);
 	  }
-	  var userObj = buildUserObj(data, collegeArr, todoList);
+
+	  userObj["college"] = collegeArr;
+	  userObj["todoList"] = todoList;
 	  res.render('user', userObj);
 	 });
 }
 
-function buildUserObj(result, collegeArr, todoList) {
-  	userObj = {
-  		name: result.name,
-  		email: result.email,
-  		gpa: result.gpa,
-  		score: result.score,
-  		location: result.location,
-  		college: collegeArr,
-  		todoList: todoList
-  	}
-  	console.log(userObj);
-  	return userObj;
-}
 
 
 
