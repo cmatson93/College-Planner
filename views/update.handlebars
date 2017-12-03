@@ -8,32 +8,32 @@
 		<form action="/update-profile" method="post">
 			<div class="form-group">
 				<label for="name">Name </label>
-				<input type="text" class="form-control" id="name" name="name" placeholder="enter name here">
+				<input type="text" class="form-control" id="name" name="name" placeholder={{name}}>
 			</div>
 			<div class="form-group">
 				<label for="email">Email </label>
-				<input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+				<input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder={{email}}>
 				<small class="form-text text-muted" id="email">We will never share your email with anyone else.</small>
 			</div>
 			<div class="form-group">
 				<label for="password">Password </label>
-				<input type="password" class="form-control" id="password" name="password" placeholder="type password">
+				<input type="password" class="form-control" id="password" name="password" placeholder={{password}}>
 			</div>
 			<div class="form-group">
 				<label for="confirm">Confirm Password </label>
-				<input type="password" class="form-control" id="confirm" name="confirm" placeholder="retype password">
+				<input type="password" class="form-control" id="confirm" name="confirm" placeholder={{password}}>
 			</div>
 			<div class="form-group">
 				<label for="location">Location </label>
-				<input type="text" class="form-control" id="location" name="location" placeholder="type zipcode">
+				<input type="text" class="form-control" id="location" name="location" placeholder={{location}}>
 			</div>
 			<div class="form-group">
 				<label for="gpa">GPA </label>
-				<input type="text" class="form-control" id="gpa" name="gpa" placeholder="GPA">
+				<input type="text" class="form-control" id="gpa" name="gpa" placeholder={{gpa}}>
 			</div>
 			<div class="form-group">
 				<label for="score">Test Scores </label>
-				<input type="text" class="form-control" id="score" name="score" placeholder="SAT or ACT scores">
+				<input type="text" class="form-control" id="score" name="score" placeholder={{score}}>
 			</div>
 			<button type="submit" class="btn btn-primary" id="login">Submit</button>
 			
