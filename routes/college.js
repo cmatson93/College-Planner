@@ -93,7 +93,7 @@ module.exports = function(app) {
 		})
 		.then(function(result) {
 			// Build the college data with updated user profileto pass it to user.handlebars
-	    	renderUserCollege(userObj, res, tasks);	
+	    	renderUserCollege(userObj, res);	
 		});
 	});
 
@@ -127,7 +127,7 @@ module.exports = function(app) {
 				  		todoList: []
 					};
 					console.log("Sign In User Data: " + util.inspect(userObj, { showHidden: true, depth: null }));
-					renderUserCollege(userObj, res, tasks);
+					renderUserCollege(userObj, res);
 
 			    } else {
 					// Make sure passwords match if not, display an error message and take the user back to Register page
@@ -154,7 +154,7 @@ module.exports = function(app) {
 				// Rember the user that logged in.  Save it global.
 				userObj = {
 					id: 0,
-					name: req.body.name,
+					name: toTitleCase(req.body.name),
 			  		email: req.body.email,
 			  		password: req.body.password,
 			  		college: [],
@@ -182,8 +182,9 @@ module.exports = function(app) {
 
 	// Todo Processing
 	app.post("/todo", function(req, res) {
+		var task = toTitleCase(req.body.task);
 		db.Task.create({
-	        task: req.body.task,
+	        task: task,
 	        UserId: userId
 	      }).then(function(result) {
 	      	db.Task.findAll({
@@ -195,21 +196,21 @@ module.exports = function(app) {
 	      	.then(function(result) {
 	      		console.log(result);
 	        	// Built the college data object to pass it to user.handlebars
-	        	tasks = [];
+	        	var tasks = [];
 	        	for (var i=0; i< result.length; i++) {
 	        		var taskObj = {task: result[i].task};
 	        		tasks.push(taskObj);
 	        	}
 	        	userObj.todoList = tasks;
 	        	console.log(tasks);
-				renderUserCollege(userObj, res, tasks);
+				renderUserCollege(userObj, res);
 	      	});
 	      });
 	});
 };
 
 // Function to render College Data for a given location
-function renderUserCollege(data, res, todos){
+function renderUserCollege(data, res){
 	
 	var location = data.location;
 
@@ -241,16 +242,7 @@ function renderUserCollege(data, res, todos){
 		  		collegeArr.push(collegeObj);
 	  		}
 
-		  	var todoList = [];
-		  	for (var i=0; i<todos.length; i++) {
-		  		var taskObj = {
-		  			task: todos[i].task
-		  		};
-		  		todoList.push(taskObj);
-		  	}
-
 			userObj["college"] = collegeArr;
-	  		userObj["todoList"] = todoList;
 	  		res.render('user', userObj);
 		}); // request
 	} else  {
@@ -258,7 +250,11 @@ function renderUserCollege(data, res, todos){
 	} // location
 }
 
-
+// Utility function to convert to title case
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 
 
 

@@ -35,10 +35,11 @@
 			<hr style="border-width: 2px;">
 			<div style="overflow: auto;">
 				<!-- ToDo list goes here-->
-				{{#each todoList}}
-					<p><strong>{{ task }}</strong></p>
-					<br>
-				{{/each}}
+				<ul style="list-style-type:square">
+					{{#each todoList}}
+						<li><strong>{{ task }}</strong></li>
+					{{/each}}
+				</ul>
 			</div>
 			<form method="post" action="/todo">
 				<div class="form-group">
