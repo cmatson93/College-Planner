@@ -18,7 +18,6 @@ module.exports =  function(app, passport){
 
 	// Home page
 	app.get("/", function(req, res) {
-		console.log("Welcome Page!");
 		res.render('index');
 	});
 
@@ -43,13 +42,11 @@ module.exports =  function(app, passport){
 
 	// Get Contact page
 	app.get("/contact", function(req, res) {
-		console.log("Contact Us");
 		res.render('contact');
 	});
 
 	// Get Testimonials page
 	app.get("/testimonials", function(req, res) {
-		console.log("Testimonials");
 		res.render('testimonials');
 	});
 
@@ -60,7 +57,6 @@ module.exports =  function(app, passport){
 
 	// Post from the Profile Update form
 	app.post("/update-profile", function(req, res) {
-		console.log("Update Profile for ID: " + userObj.id + " and " + userObj.name);
 
 		// Let us save the latest information from the form
 		if (req.body.location) {
@@ -75,7 +71,7 @@ module.exports =  function(app, passport){
 			userObj["score"] = req.body.score;
 		}
 
-		console.log("Updated User Object: " + userObj);
+
 
 		// Update user data: Score, GPA and Location
 		// For now we are restricting the user from updating the name, email and password once it is created
@@ -99,7 +95,7 @@ module.exports =  function(app, passport){
 
 	// Post from the Sign In or Registrtion Form
 	app.get("/profile",isLoggedIn, function(req, res) {
-		console.log("Post User Sig In Data");
+
 
 			    	userId = req.user.id;
 						userObj = {
@@ -112,8 +108,7 @@ module.exports =  function(app, passport){
 				  		college: [],
 				  		todoList: []
 					};
-						renderUserCollege(userObj, res);
-			
+					getTask(userObj,res);
 
 	});
 
@@ -124,26 +119,30 @@ module.exports =  function(app, passport){
 	        task: task,
 	        UserId: userId
 	      }).then(function(result) {
-	      	db.Task.findAll({
-	        	// include: [db.User],
-	        	where: {
-	          		UserId: userId
-	        	}
-	      	})
-	      	.then(function(result) {
-	      		console.log(result);
-	        	// Built the college data object to pass it to user.handlebars
-	        	var tasks = [];
-	        	for (var i=0; i< result.length; i++) {
-	        		var taskObj = {task: result[i].task};
-	        		tasks.push(taskObj);
-	        	}
-	        	userObj.todoList = tasks;
-	        	console.log(tasks);
-				renderUserCollege(userObj, res);
-	      	});
+	      	getTask(userObj,res);
 	      });
 	});
+
+	function getTask(userObj,res){
+		db.Task.findAll({
+			// include: [db.User],
+			where: {
+					UserId: userId
+			}
+		})
+		.then(function(result) {
+
+			// Built the college data object to pass it to user.handlebars
+			var tasks = [];
+			for (var i=0; i< result.length; i++) {
+				var taskObj = {task: result[i].task};
+				tasks.push(taskObj);
+			}
+			userObj.todoList = tasks;
+
+	renderUserCollege(userObj, res);
+		});
+	}
 
 	function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
@@ -156,8 +155,6 @@ module.exports =  function(app, passport){
 
 // Function to render College Data for a given location
 function renderUserCollege(data, res){
-console.log("#####################data############################")
-	console.log(data);
 
 	var location = data.location;
 
@@ -168,10 +165,6 @@ console.log("#####################data############################")
 
 		// API to get College Data
 		request(query, function (error, response, body) {
-
-	 		console.log('College Data Error:', error); // Print the error if one occurred
-	  		console.log('College Data Status Code:', response && response.statusCode); // Print the response status code if a response was received
-
 		  	// Display only top 5 colleges
 		 	var length = 5;
 			if (JSON.parse(body).results.length < 5) {
