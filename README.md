@@ -36,7 +36,7 @@ The live site is available to use and view here, (https://stark-falls-90798.hero
 * [NPM Packages](https://www.npmjs.com) - Dependency Management
 * [College Scorecard](http://api.data.gov/ed/collegescorecard/) - Used for APIs
 
-![Wire Frames](/public/assets/images/20iin.gif "Wire Frames")
+![Wire Frames](/public/assets/images/20iiin.gif "Wire Frames")
 
 ## Versioning
 
