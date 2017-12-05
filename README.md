@@ -27,7 +27,7 @@ A step by step series of examples that tell you have to get a development env ru
 
 The live site is available to use and view here, (https://stark-falls-90798.herokuapp.com/)
 
-![College Planner Web App Demo](https://cmatson93.github.io/College-Planner/public/assets/images/20iic1.gif "College Planner Demo")
+![College Planner Web App Demo](/public/assets/images/20iic1.gif "College Planner Demo")
 
 ## Built With
 
@@ -36,7 +36,7 @@ The live site is available to use and view here, (https://stark-falls-90798.hero
 * [NPM Packages](https://www.npmjs.com) - Dependency Management
 * [College Scorecard](http://api.data.gov/ed/collegescorecard/) - Used for APIs
 
-![Wire Frames](https://cmatson93.github.io/College-Planner/public/assets/images/20iin.gif "Wire Frames")
+![Wire Frames](/public/assets/images/20iin.gif "Wire Frames")
 
 ## Versioning
 
