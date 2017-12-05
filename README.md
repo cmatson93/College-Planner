@@ -1,5 +1,5 @@
 # College Planner
-![College Planner Web App Logo](https://cmatson93.github.io/College-Planner/public/assets/images/college_planner_logo.png "College Planner Logo")
+![College Planner Web App Logo](https://cmatson93.github.io/College-Planner/images/college_planner_logo.png "College Planner Logo")
 
 College Planner is a web app that assists students in finding their perfect college. Users can log on and input their personal data such as GPA, ACT/SAT scores, desired field of study, location of future school, school size, etc. Based on the user settings, the app then displays top schools for the user to apply to and also allows user to create a todo list of tasks needed to complete in order to successfully get into desired school. 
 
